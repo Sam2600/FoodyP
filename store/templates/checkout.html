@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load cart_filters %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mt-10 mx-auto p-6 bg-white shadow rounded-lg">
+   <h1 class="text-2xl font-bold mb-6">Your Cart</h1>
+
+   {% if items %}
+      <table class="w-full text-left mb-6">
+         <thead>
+            <tr class="border-b">
+            <th class="py-2">Item</th>
+            <th class="py-2">Price</th>
+            <th class="py-2">Quantity</th>
+            <th class="py-2">Total</th>
+            </tr>
+         </thead>
+         <tbody>
+            {% for item in items %}
+            <tr class="border-b" data-id="{{ item.id }}">
+               <td class="py-4 flex items-center space-x-4">
+                  <img src="{{ item.image_url }}" alt="{{ item.name }}" class="w-16 h-16 object-cover rounded" />
+                  <div>
+                     <p class="font-semibold">{{ item.name }}</p>
+                  </div>
+               </td>
+               <td class="py-4">${{ item.price }}</td>
+               <td class="py-4">
+                  <div class="flex items-center space-x-2">
+                     <button class="decrease bg-gray-300 px-2 rounded" data-id="{{ item.id }}">−</button>
+                     <span class="px-2 quantity">{{ item.quantity }}</span>
+                     <button class="increase bg-gray-300 px-2 rounded" data-id="{{ item.id }}">+</button>
+                  </div>
+               </td>
+               <!-- <td class="py-4">$<span class="item-total">{{ item.quantity|floatformat:2|floatformat|add:item.price }}</span></td> -->
+               <td class="py-4">$<span class="item-total">{{ item.quantity|multiply:item.price|floatformat:2 }}</span></td>
+            </tr>
+            {% endfor %}
+         </tbody>
+      </table>
+
+      <div class="text-right mb-4">
+         <p class="text-xl font-bold">
+            Total: $ <span id="cart-total">{{ total }}</span>
+         </p>
+      </div>
+
+      <div class="text-right">
+         <form method="post" action="{% url 'place_order' %}">
+            {% csrf_token %}
+            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded">Checkout</button>
+         </form>
+      </div>
+   {% else %}
+      <p>Your cart is empty.</p>
+   {% endif %}
+   </div>
+
+   <script>
+   document.addEventListener('DOMContentLoaded', function () {
+   document.querySelectorAll('.increase, .decrease').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+         const itemId = this.dataset.id;
+         const action = this.classList.contains('increase') ? 'increase' : 'decrease';
+         const row = this.closest('tr');
+
+         fetch("{% url 'update_cart' %}", {
+         method: "POST",
+         headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/x-www-form-urlencoded",
+         },
+         body: `item_id=${itemId}&action=${action}`
+         })
+         .then(res => res.json())
+         .then(data => {
+         if (data.success) {
+            row.querySelector('.quantity').textContent = data.item_quantity;
+            row.querySelector('.item-total').textContent = data.item_total.toFixed(2);
+            document.getElementById('cart-total').textContent = data.cart_total.toFixed(2);
+         }
+         });
+      });
+   });
+});
+</script>
+{% endblock %}

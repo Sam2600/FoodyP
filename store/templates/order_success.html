@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+   <div class="container mt-10">
+      <h1 class="text-2xl font-bold mb-4">✅ Order Placed Successfully!</h1>
+      <p class="mb-4">Your order ID is <strong>#{{ order.id }}</strong>.</p>
+
+      <div class="bg-white p-4 rounded shadow">
+         <h2 class="font-bold text-lg mb-2">Order Summary:</h2>
+         <ul class="space-y-2">
+            {% for item in order.items.all %}
+            <li class="flex justify-between border-b pb-2">
+               <span>{{ item.name }} (x{{ item.quantity }})</span>
+               <span>${{ item.sub_total }}</span>
+            </li>
+            {% endfor %}
+            <br>
+            <p class="text-semibold text-md">
+               Total Amount is: 
+               <b>
+                  ${{ total_amount }}
+               </b>
+            </p>
+         </ul>
+      </div>
+   </div>
+{% endblock %}
