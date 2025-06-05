@@ -1,9 +1,11 @@
 # Create your views here.
 from decimal import Decimal
 from django.http import JsonResponse
+from django.http import HttpResponseRedirect
 from .models import Item, Order, OrderItem, Category
 from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, render, redirect
+
 
 ###################################################
 
@@ -36,7 +38,7 @@ def add_to_cart(request, item_id):
    for i in cart:
       if i['id'] == item.id:
          # Already in cart, don’t add again
-         return redirect('item_list')
+         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
    cart.append({
       'id': item.id,
@@ -49,7 +51,8 @@ def add_to_cart(request, item_id):
    })
 
    request.session['cart'] = cart
-   return redirect('item_list')
+   # Redirect back to the previous page (or fallback to /)
+   return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 ###################################################
 
@@ -159,8 +162,6 @@ def update_cart(request):
 
    return JsonResponse({'success': False}, status=400)
 
-
-
 ###################################################
 
 def create_order_from_cart(cart):
@@ -185,4 +186,3 @@ def create_order_from_cart(cart):
    # Save the order
    order = Order.objects.create(summary=summary, total_amount=total_amount)
    return order
-
