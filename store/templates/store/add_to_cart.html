@@ -1,8 +1,0 @@
-<h1>Add to Cart</h1>
-<!-- <p>{{ item.name }} - ${{ item.price }}</p> -->
-
-<form method="POST">
-   {% csrf_token %}
-   Quantity: <input type="number" name="quantity" value="1" min="1" required>
-   <button type="submit">Add</button>
-</form>

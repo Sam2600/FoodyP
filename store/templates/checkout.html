@@ -4,86 +4,141 @@
 {% block title %}Checkout{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mt-10 mx-auto p-6 bg-white shadow rounded-lg">
-   <h1 class="text-2xl font-bold mb-6">Your Cart</h1>
+<section class=" py-8 antialiased md:py-16">
+  <div class="mx-auto max-w-screen-xl px-4 2xl:px-0">
+    <h2 class="text-xl font-semibold">Your Cart</h2>
 
-   {% if items %}
-      <table class="w-full text-left mb-6">
-         <thead>
-            <tr class="border-b">
-            <th class="py-2">Item</th>
-            <th class="py-2">Price</th>
-            <th class="py-2">Quantity</th>
-            <th class="py-2">Total</th>
-            </tr>
-         </thead>
-         <tbody>
+    <div class="mt-6 sm:mt-8 md:gap-6 lg:flex lg:items-start xl:gap-8">
+      <div class="mx-auto w-full flex-none lg:max-w-2xl xl:max-w-4xl">
+        <div class="space-y-6">
+          {% if items %}
             {% for item in items %}
-            <tr class="border-b" data-id="{{ item.id }}">
-               <td class="py-4 flex items-center space-x-4">
-                  <img src="{{ item.image_url }}" alt="{{ item.name }}" class="w-16 h-16 object-cover rounded" />
-                  <div>
-                     <p class="font-semibold">{{ item.name }}</p>
+            <div class="rounded-lg border border-gray-200 p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 md:p-6">
+              <div class="space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
+                <div class="shrink-0 md:order-1">
+                  <img src="{{ item.image_url }}" alt="{{ item.name }}" class="h-20 w-20 object-cover rounded" />
+                </div>
+
+                <div class="flex items-center justify-between md:order-3 md:justify-end">
+                  <div class="flex items-center">
+                    <button type="button" class="decrease inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700" data-id="{{ item.id }}">
+                      <svg class="h-2.5 w-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 2">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h16" />
+                      </svg>
+                    </button>
+                    <span class="quantity w-10 shrink-0 border-0 bg-transparent text-center text-sm font-medium text-gray-900 focus:outline-none focus:ring-0 dark:text-white">{{ item.quantity }}</span>
+                    <button type="button" class="increase inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700" data-id="{{ item.id }}">
+                      <svg class="h-2.5 w-2.5 text-gray-900 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16" />
+                      </svg>
+                    </button>
                   </div>
-               </td>
-               <td class="py-4">${{ item.price }}</td>
-               <td class="py-4">
-                  <div class="flex items-center space-x-2">
-                     <button class="decrease bg-gray-300 px-2 rounded" data-id="{{ item.id }}">−</button>
-                     <span class="px-2 quantity">{{ item.quantity }}</span>
-                     <button class="increase bg-gray-300 px-2 rounded" data-id="{{ item.id }}">+</button>
+                  <div class="text-end md:order-4 md:w-32">
+                    <p class="text-base font-bold text-gray-900 dark:text-white">$<span class="item-total">{{ item.quantity|multiply:item.price|floatformat:2 }}</span></p>
                   </div>
-               </td>
-               <!-- <td class="py-4">$<span class="item-total">{{ item.quantity|floatformat:2|floatformat|add:item.price }}</span></td> -->
-               <td class="py-4">$<span class="item-total">{{ item.quantity|multiply:item.price|floatformat:2 }}</span></td>
-            </tr>
+                </div>
+
+                <div class="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
+                  <p class="text-base font-medium text-gray-900 dark:text-white">{{ item.name }}</p>
+                  <p class="text-sm text-gray-500 dark:text-gray-400">${{ item.price }}</p>
+                  
+                  <div class="flex items-center gap-4">
+                    <button type="button" class="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500">
+                      <svg class="me-1.5 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
+                      </svg>
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
             {% endfor %}
-         </tbody>
-      </table>
-
-      <div class="text-right mb-4">
-         <p class="text-xl font-bold">
-            Total: $ <span id="cart-total">{{ total }}</span>
-         </p>
+          {% else %}
+            <div class="rounded-lg border border-gray-200 bg-white p-6 text-center dark:border-gray-700 dark:bg-gray-800">
+              <p class="text-gray-500 dark:text-gray-400">Your cart is empty.</p>
+            </div>
+          {% endif %}
+        </div>
       </div>
 
-      <div class="text-right">
-         <form method="post" action="{% url 'place_order' %}">
+      <div class="mx-auto mt-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full">
+        {% if items %}
+        <div class="space-y-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-800 sm:p-6">
+          <p class="text-xl font-semibold text-gray-900 dark:text-white">Order summary</p>
+
+          <div class="space-y-4">
+            <div class="space-y-2">
+              <dl class="flex items-center justify-between gap-4">
+                <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Subtotal</dt>
+                <dd class="text-base font-medium text-gray-900 dark:text-white">$<span id="cart-subtotal">{{ total|floatformat:2 }}</span></dd>
+              </dl>
+
+              <dl class="flex items-center justify-between gap-4">
+                <dt class="text-base font-normal text-gray-500 dark:text-gray-400">Shipping</dt>
+                <dd class="text-base font-medium text-gray-900 dark:text-white">$0.00</dd>
+              </dl>
+            </div>
+
+            <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
+              <dt class="text-base font-bold text-gray-900 dark:text-white">Total</dt>
+              <dd class="text-base font-bold text-gray-900 dark:text-white">$<span id="cart-grand-total">{{ total|floatformat:2 }}</span></dd>
+            </dl>
+          </div>
+
+          <form method="post" action="{% url 'place_order' %}">
             {% csrf_token %}
-            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded">Checkout</button>
-         </form>
+            <button type="submit" class="flex w-full items-center justify-center rounded-lg bg-white px-5 py-2.5 text-sm font-medium text-primary-700 hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+              Proceed to Checkout
+            </button>
+          </form>
+
+          <div class="flex items-center justify-center gap-2">
+            <span class="text-sm font-normal text-gray-500 dark:text-gray-400"> or </span>
+            <a href="/" class="inline-flex text-white items-center gap-2 text-sm font-medium underline hover:no-underline">
+              Continue Shopping
+              <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 12H5m14 0-4 4m4-4-4-4" />
+              </svg>
+            </a>
+          </div>
+        </div>
+        {% endif %}
       </div>
-   {% else %}
-      <p>Your cart is empty.</p>
-   {% endif %}
-   </div>
+    </div>
+  </div>
+</section>
 
-   <script>
-   document.addEventListener('DOMContentLoaded', function () {
-   document.querySelectorAll('.increase, .decrease').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-         const itemId = this.dataset.id;
-         const action = this.classList.contains('increase') ? 'increase' : 'decrease';
-         const row = this.closest('tr');
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.increase, .decrease').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const itemId = this.dataset.id;
+      const action = this.classList.contains('increase') ? 'increase' : 'decrease';
+      const itemCard = this.closest('.rounded-lg');
 
-         fetch("{% url 'update_cart' %}", {
-         method: "POST",
-         headers: {
-            "X-CSRFToken": "{{ csrf_token }}",
-            "Content-Type": "application/x-www-form-urlencoded",
-         },
-         body: `item_id=${itemId}&action=${action}`
-         })
-         .then(res => res.json())
-         .then(data => {
-         if (data.success) {
-            row.querySelector('.quantity').textContent = data.item_quantity;
-            row.querySelector('.item-total').textContent = data.item_total.toFixed(2);
-            document.getElementById('cart-total').textContent = data.cart_total.toFixed(2);
-         }
-         });
+      fetch("{% url 'update_cart' %}", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `item_id=${itemId}&action=${action}`
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          itemCard.querySelector('.quantity').textContent = data.item_quantity;
+          itemCard.querySelector('.item-total').textContent = data.item_total.toFixed(2);
+          
+          // Update BOTH subtotal and grand total
+          console.log(data.cart_total);
+          document.getElementById('cart-subtotal').textContent = data.cart_total.toFixed(2);
+          document.getElementById('cart-grand-total').textContent = data.cart_total.toFixed(2);
+        }
       });
-   });
+    });
+  });
 });
 </script>
 {% endblock %}

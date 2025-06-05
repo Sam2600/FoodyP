@@ -83,6 +83,11 @@ def terms(request):
 
 ###################################################
 
+def order_success(request):
+   return render(request, 'order_success.html')
+
+###################################################
+
 def contact_us(request):
    return render(request, 'contact_us.html')
 
@@ -114,8 +119,8 @@ def place_order(request):
 
    # Clear the cart
    request.session['cart'] = []
-
-   return render(request, 'order_success.html', {'order': order, 'total_amount': total_amount})
+   return render(request, 'payment.html', {'order': order, 'total_amount': total_amount})
+   #return render(request, 'order_success.html', {'order': order, 'total_amount': total_amount})
 
 ###################################################
 

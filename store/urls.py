@@ -9,6 +9,9 @@ urlpatterns = [
     # ✅ View list items
     path('', views.item_list, name='item_list'),
 
+    # ✅ View order_success
+    path('order_success/', views.order_success, name='order_success'),
+
     # ✅ Privacy
     path('privacy/', views.privacy, name='privacy'),
 
