@@ -120,7 +120,6 @@ def place_order(request):
    # Clear the cart
    request.session['cart'] = []
    return render(request, 'payment.html', {'order': order, 'total_amount': total_amount})
-   #return render(request, 'order_success.html', {'order': order, 'total_amount': total_amount})
 
 ###################################################
 

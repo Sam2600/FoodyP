@@ -1,13 +1,116 @@
-1. How to start the server ?
-   - python manage.py runserver
+===========================================
+🛠️ Django E-Commerce Project Installation Manual
+===========================================
 
-2. How to reset the migration and database ?
-   - Delete the db.sqlite3 File
-   - cd to the your application directory -> (store)
-   - 1.1 rm -f store/migrations/0*
-   - 1.2 python manage.py migrate store zero
-   - 1.3 python manage.py makemigrations
-   - 1.4 python manage.py migrate
+This guide will walk you through how to run the Django project locally.
+Even if you're not technical, just follow the steps carefully and you'll get it working.
 
-3. How to create admin user account ?
-   - python manage.py createsuperuser
+
+-------------------------------------------
+✅ REQUIREMENTS
+-------------------------------------------
+Before starting, you’ll need to install the following:
+
+1. Python (recommended version: 3.10 or above)
+2. A simple code editor (like VS Code) – optional
+3. Basic command-line usage (just copy-paste)
+
+
+
+-------------------------------------------
+📦 STEP 1 — Install Python
+-------------------------------------------
+
+1. Go to the official Python download page:  
+   https://www.python.org/downloads/
+
+2. Download the latest version for Windows.
+
+3. During installation:
+   ✅ Make sure to check the box **"Add Python to PATH"**  
+   Then click “Install Now”.
+
+4. After install, open **Command Prompt** and run:
+
+   ```bash
+   python --version
+
+-------------------------------------------
+📂 STEP 2 — Unzip the Project Folder
+-------------------------------------------
+
+1.  Right-click the .zip file you received.
+
+2.  Click "Extract All..."
+
+3.  Choose a location like C:\Users\YourName\Desktop\my_project
+
+4.  You should now see folders like:
+
+   store/
+
+   myproject/
+
+   manage.py
+
+-------------------------------------------------------
+🐍 STEP 3 — Create a Python Virtual Environment
+-------------------------------------------------------
+
+
+1. Open Command Prompt.
+
+2. Go to your project folder:
+	cd C:\Users\YourName\Desktop\my_project
+
+3. Run the following to create a virtual environment:
+	python -m venv venv
+
+4. Activate it:
+      venv\Scripts\activate 
+      If successful, your prompt will look like this:
+      (venv) C:\Users\YourName\Desktop\my_project>
+
+
+-------------------------------------------------------
+🧱 STEP 4 — Set Up the Database
+-------------------------------------------------------
+
+   Run database migrations:
+      python manage.py makemigrations
+      python manage.py migrate
+	
+   (Optional) Create an admin user to manage the backend:
+      python manage.py createsuperuser
+
+-------------------------------------------------------
+🚀 STEP 5 — Run the Server
+-------------------------------------------------------
+
+   Now start the Django development server:
+      python manage.py runserver
+
+   If successful, open your browser and visit:
+      http://127.0.0.1:8000/
+
+   You should see your e-commerce homepage. To access the admin panel (if you created the admin user):
+      http://127.0.0.1:8000/admin/
+
+-------------------------------------------------------
+🎯 TROUBLESHOOTING
+-------------------------------------------------------
+
+   If you get a ModuleNotFoundError, make sure you activated the virtual environment and installed dependencies.
+
+   If port 8000 is busy, try python manage.py runserver 8001
+
+-------------------------------------------------------
+📘 NOTES
+-------------------------------------------------------
+
+   This project uses SQLite (built-in), so no extra database setup is required.
+
+   Do not delete the db.sqlite3 file unless you want to reset all data.
+
+   The venv/ folder is for Python dependencies. Don’t touch or delete it once created.
+
