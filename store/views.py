@@ -85,23 +85,16 @@ def terms(request):
    return render(request, 'terms.html')
 
 ###################################################
-
-def order_success(request):
-   return render(request, 'order_success.html')
-
-###################################################
-
-def contact_us(request):
-   return render(request, 'contact_us.html')
-
-###################################################
-
 @require_POST
-def place_order(request):
+def order_success(request):
+
    cart = request.session.get('cart', [])
 
    if not cart:
       return redirect('checkout')
+   
+   # Get payment user name from form POST data
+   cardholder_name = request.POST.get('cardholder_name', '').strip()
 
    order = Order.objects.create()
 
@@ -118,10 +111,40 @@ def place_order(request):
       )
 
    # Track order data
-   total_amount = create_order_from_cart(cart).total_amount
+   create_order_from_cart(cart, cardholder_name)
 
    # Clear the cart
    request.session['cart'] = []
+
+   return render(request, 'order_success.html')
+
+###################################################
+
+def contact_us(request):
+   return render(request, 'contact_us.html')
+
+###################################################
+
+@require_POST
+def place_order(request):
+   cart = request.session.get('cart', [])
+
+   if not cart:
+      return redirect('checkout')
+
+   order = []
+
+   total_amount = 0
+
+   for item in cart:
+      sub_total = item['price'] * item['quantity']
+      order.append({
+         'name': item['name'],
+         'quantity': item['quantity'],
+         'sub_total': sub_total
+      })
+      total_amount += sub_total
+
    return render(request, 'payment.html', {'order': order, 'total_amount': total_amount})
 
 ###################################################
@@ -164,7 +187,7 @@ def update_cart(request):
 
 ###################################################
 
-def create_order_from_cart(cart):
+def create_order_from_cart(cart, cardholder_name):
    """
       cart = [
          {"name": "Banana", "quantity": 2, "price": 18.0},
@@ -175,6 +198,9 @@ def create_order_from_cart(cart):
    summary_lines = []
    total_amount = Decimal('0.00')
 
+   line = cardholder_name
+   summary_lines.append(line)
+   
    for item in cart:
       sub_total = Decimal(item['price']) * item['quantity']
       line = f"{item['quantity']} {item['name']} (${sub_total})"
