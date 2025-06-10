@@ -2,6 +2,7 @@
 from decimal import Decimal
 from django.http import JsonResponse
 from django.http import HttpResponseRedirect
+from django.views.decorators.csrf import csrf_exempt
 from .models import Item, Order, OrderItem, Category
 from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404, render, redirect
@@ -149,41 +150,47 @@ def place_order(request):
 
 ###################################################
 
+@require_POST
 def update_cart(request):
-   if request.method == 'POST':
-      item_id = request.POST.get('item_id')
-      action = request.POST.get('action')
+   item_id = request.POST.get('item_id')
+   action = request.POST.get('action')
 
-      cart = request.session.get('cart', [])
+   cart = request.session.get('cart', [])
 
-      updated_item = None  # Track the specific item
+   updated_item = None
 
-      for item in cart:
-         if str(item['id']) == str(item_id):
-            if action == 'increase':
+   for item in cart:
+      if str(item['id']) == str(item_id):
+         if action == 'increase':
                item['quantity'] += 1
-            elif action == 'decrease' and item['quantity'] > 1:
+         elif action == 'decrease' and item['quantity'] > 1:
                item['quantity'] -= 1
-            updated_item = item  # Save the matched item
-            break
+         updated_item = item
+         break
 
-      request.session['cart'] = cart
+   request.session['cart'] = cart
 
-      if not updated_item:
-         return JsonResponse({'success': False, 'error': 'Item not found'}, status=404)
-
-      item_total = updated_item['quantity'] * updated_item['price']
-      cart_total = sum(i['quantity'] * i['price'] for i in cart)
-
+   if updated_item:
+      item_total = updated_item['price'] * updated_item['quantity']
+      cart_total = sum(item['price'] * item['quantity'] for item in cart)
       return JsonResponse({
          'success': True,
-         'item_id': updated_item['id'],
          'item_quantity': updated_item['quantity'],
          'item_total': item_total,
          'cart_total': cart_total,
       })
 
-   return JsonResponse({'success': False}, status=400)
+   return JsonResponse({'success': False})
+
+###################################################
+
+@require_POST
+def remove_from_cart(request):
+   item_id = request.POST.get('item_id')
+   cart = request.session.get('cart', [])
+   cart = [item for item in cart if str(item['id']) != str(item_id)]
+   request.session['cart'] = cart
+   return JsonResponse({'success': True})
 
 ###################################################
 

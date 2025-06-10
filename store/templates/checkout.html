@@ -43,7 +43,7 @@
                   <p class="text-sm text-gray-500 dark:text-gray-400">${{ item.price }}</p>
                   
                   <div class="flex items-center gap-4">
-                    <button type="button" class="inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500">
+                    <button type="button" class="remove-item inline-flex items-center text-sm font-medium text-red-600 hover:underline dark:text-red-500" data-id="{{ item.id }}">
                       <svg class="me-1.5 h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6" />
                       </svg>
@@ -111,6 +111,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+
   document.querySelectorAll('.increase, .decrease').forEach(function (btn) {
     btn.addEventListener('click', function () {
       const itemId = this.dataset.id;
@@ -132,13 +133,35 @@ document.addEventListener('DOMContentLoaded', function () {
           itemCard.querySelector('.item-total').textContent = data.item_total.toFixed(2);
           
           // Update BOTH subtotal and grand total
-          console.log(data.cart_total);
           document.getElementById('cart-subtotal').textContent = data.cart_total.toFixed(2);
           document.getElementById('cart-grand-total').textContent = data.cart_total.toFixed(2);
         }
       });
     });
   });
+
+  document.querySelectorAll('.remove-item').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const itemId = this.dataset.id;
+
+      fetch("{% url 'remove_from_cart' %}", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `item_id=${itemId}`
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();  // Simpler: just reload to reflect changes
+        }
+      });
+    });
+  });
+
 });
+
 </script>
 {% endblock %}

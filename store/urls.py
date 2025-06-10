@@ -30,6 +30,9 @@ urlpatterns = [
     # ✅ Update ordered items count
     path('update-cart/', views.update_cart, name='update_cart'),
 
+    # ✅ Remove item from cart
+    path('remove_from_cart/', views.remove_from_cart, name='remove_from_cart'),
+
     # ✅ View ordered items
     path('place-order/', views.place_order, name='place_order'),
 
